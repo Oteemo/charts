@@ -38,7 +38,7 @@ spec:
       targetPort: {{ .Values.nexus.nexusPort }}
 {{- end }}
   selector:
-    app: {{ template "nexus.name" . }}
+    app: {{ template "nexus.fullname" . }}
     release: {{ .Release.Name }}
   type: {{ .Values.nexus.service.type }}
   {{- if and (eq .Values.nexus.service.type "ClusterIP") .Values.nexus.service.clusterIP }}

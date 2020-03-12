@@ -31,7 +31,7 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      app: {{ template "nexus.name" . }}
+      app: {{ template "nexus.fullname" . }}
       release: {{ .Release.Name }}
   template:
     metadata:
@@ -40,7 +40,7 @@ spec:
 {{ toYaml .Values.nexus.podAnnotations | indent 8}}
     {{- end }}
       labels:
-        app: {{ template "nexus.name" . }}
+        app: {{ template "nexus.fullname" . }}
         release: {{ .Release.Name }}
     spec:
       {{- if .Values.deployment.initContainers }}
@@ -110,11 +110,11 @@ spec:
               name: {{ template "nexus.fullname" . }}-backup
             {{- if .Values.config.enabled }}
             - mountPath: {{ .Values.config.mountPath }}
-              name: {{ template "nexus.name" . }}-conf
+              name: {{ template "nexus.fullname" . }}-conf
             {{- end }}
             {{- if .Values.secret.enabled }}
             - mountPath: {{ .Values.secret.mountPath }}
-              name: {{ template "nexus.name" . }}-secret
+              name: {{ template "nexus.fullname" . }}-secret
               readOnly: {{ .Values.secret.readOnly }}
             {{- end }}
             {{- if .Values.deployment.additionalVolumeMounts}}
@@ -252,14 +252,14 @@ spec:
           {{- end }}
         {{- end }}
         {{- if .Values.config.enabled }}
-        - name: {{ template "nexus.name" . }}-conf
+        - name: {{ template "nexus.fullname" . }}-conf
           configMap:
-            name: {{ template "nexus.name" . }}-conf
+            name: {{ template "nexus.fullname" . }}-conf
         {{- end }}
         {{- if .Values.secret.enabled }}
-        - name: {{ template "nexus.name" . }}-secret
+        - name: {{ template "nexus.fullname" . }}-secret
           secret:
-            secretName: {{ template "nexus.name" . }}-secret
+            secretName: {{ template "nexus.fullname" . }}-secret
         {{- end }}
         {{- if .Values.deployment.additionalVolumes }}
 {{ toYaml .Values.deployment.additionalVolumes | indent 8 }}

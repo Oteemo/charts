@@ -5,7 +5,7 @@ metadata:
 {{- if .Values.service.name }}
   name: {{ .Values.service.name }}
 {{- else }}
-  name: {{ template "nexus.name" . }}-service
+  name: {{ template "nexus.fullname" . }}-service
 {{- end }}
   labels:
 {{ include "nexus.labels" . | indent 4 }}
@@ -27,7 +27,7 @@ spec:
 {{ toYaml . | indent 2 }}
   {{- end }}
   selector:
-    app: {{ template "nexus.name" . }}
+    app: {{ template "nexus.fullname" . }}
     release: {{ .Release.Name }}
   type: {{ .Values.service.type }}
   {{ if .Values.service.loadBalancerSourceRanges }}
