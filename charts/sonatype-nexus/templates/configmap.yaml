@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "nexus.name" . }}-conf
+  name: {{ template "nexus.fullname" . }}-conf
   labels:
 {{ include "nexus.labels" . | indent 4 }}
 {{- if .Values.nexus.labels }}
