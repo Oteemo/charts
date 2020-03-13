@@ -140,6 +140,10 @@ nexusBackup:
   imagePullPolicy: IfNotPresent
   env:
     targetBucket:
+    ## Cloud IAM service account key path
+    ## the name of the file is define in secret.data
+    # serviceAccountKeyPath: "/etc/secret-volume/account-key"
+    serviceAccountKeyPath: 
   nexusAdminPassword: "admin123"
   persistence:
     enabled: true
@@ -226,6 +230,8 @@ secret:
   mountPath: /etc/secret-volume
   readOnly: true
   data:
+    ## Service account key file. See nexusBackup.env.serviceAccountKeyPath
+    # account-key: "Insert here the content of the service account key encoded in base64."
 
 # # To use an additional service, set enable to true
 service:

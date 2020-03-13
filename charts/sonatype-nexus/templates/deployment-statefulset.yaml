@@ -202,6 +202,8 @@ spec:
               value: "maven-central maven-public maven-releases maven-snapshots"
             - name: TARGET_BUCKET
               value: {{ .Values.nexusBackup.env.targetBucket | quote }}
+            - name: CLOUD_IAM_SERVICE_ACCOUNT_KEY_PATH
+              value: {{ .Values.nexusBackup.env.serviceAccountKeyPath | quote }}
             - name: GRACE_PERIOD
               value: "60"
             - name: TRIGGER_FILE
