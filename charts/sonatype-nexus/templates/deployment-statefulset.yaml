@@ -1,21 +1,21 @@
 {{- if .Values.statefulset.enabled }}
 apiVersion: apps/v1
 kind: StatefulSet
-{{- else }}
+  {{- else }}
 apiVersion: apps/v1
 kind: Deployment
-{{- end }}
+  {{- end }}
 metadata:
   name: {{ template "nexus.fullname" . }}
   labels:
-{{ include "nexus.labels" . | indent 4 }}
-{{- if .Values.nexus.labels }}
-{{ toYaml .Values.nexus.labels | indent 4 }}
-{{- end }}
-{{- if .Values.deployment.annotations }}
+  {{ include "nexus.labels" . | indent 4 }}
+  {{- if .Values.nexus.labels }}
+  {{ toYaml .Values.nexus.labels | indent 4 }}
+  {{- end }}
+  {{- if .Values.deployment.annotations }}
   annotations:
-{{ toYaml .Values.deployment.annotations | indent 4 }}
-{{- end }}
+  {{ toYaml .Values.deployment.annotations | indent 4 }}
+  {{- end }}
 spec:
   replicas: {{ .Values.replicaCount }}
   {{- if .Values.statefulset.enabled }}
@@ -27,7 +27,7 @@ spec:
   {{- end }}
   {{- if .Values.deploymentStrategy }}
   strategy:
-{{ toYaml .Values.deploymentStrategy | indent 4 }}
+  {{ toYaml .Values.deploymentStrategy | indent 4 }}
   {{- end }}
   selector:
     matchLabels:
@@ -35,25 +35,25 @@ spec:
       release: {{ .Release.Name }}
   template:
     metadata:
-    {{- if .Values.nexus.podAnnotations }}
+      {{- if .Values.nexus.podAnnotations }}
       annotations:
-{{ toYaml .Values.nexus.podAnnotations | indent 8}}
-    {{- end }}
+      {{ toYaml .Values.nexus.podAnnotations | indent 8}}
+      {{- end }}
       labels:
         app: {{ template "nexus.fullname" . }}
         release: {{ .Release.Name }}
     spec:
       {{- if .Values.deployment.initContainers }}
       initContainers:
-{{ toYaml .Values.deployment.initContainers | indent 6 }}
+      {{ toYaml .Values.deployment.initContainers | indent 6 }}
       {{- end }}
       {{- if .Values.nexus.nodeSelector }}
       nodeSelector:
-{{ toYaml .Values.nexus.nodeSelector | indent 8 }}
+      {{ toYaml .Values.nexus.nodeSelector | indent 8 }}
       {{- end }}
       {{- if .Values.nexus.hostAliases }}
       hostAliases:
-{{ toYaml .Values.nexus.hostAliases | indent 8 }}
+      {{ toYaml .Values.nexus.hostAliases | indent 8 }}
       {{- end }}
       {{- if .Values.nexus.imagePullSecret }}
       imagePullSecrets:
@@ -75,9 +75,9 @@ spec:
                 command: {{ .Values.deployment.postStart.command }}
           {{- end }}
           env:
-{{ toYaml .Values.nexus.env | indent 12 }}
+          {{ toYaml .Values.nexus.env | indent 12 }}
           resources:
-{{ toYaml .Values.nexus.resources | indent 12 }}
+          {{ toYaml .Values.nexus.resources | indent 12 }}
           ports:
             - containerPort: {{ .Values.nexus.dockerPort }}
               name: nexus-docker-g
@@ -92,7 +92,7 @@ spec:
             failureThreshold: {{ .Values.nexus.livenessProbe.failureThreshold }}
             {{- if .Values.nexus.livenessProbe.timeoutSeconds }}
             timeoutSeconds: {{ .Values.nexus.livenessProbe.timeoutSeconds }}
-            {{- end }}
+          {{- end }}
           readinessProbe:
             httpGet:
               path: {{ .Values.nexus.readinessProbe.path }}
@@ -102,7 +102,7 @@ spec:
             failureThreshold: {{ .Values.nexus.readinessProbe.failureThreshold }}
             {{- if .Values.nexus.readinessProbe.timeoutSeconds }}
             timeoutSeconds: {{ .Values.nexus.readinessProbe.timeoutSeconds }}
-            {{- end }}
+          {{- end }}
           volumeMounts:
             - mountPath: /nexus-data
               name: {{ template "nexus.fullname" . }}-data
@@ -118,13 +118,13 @@ spec:
               readOnly: {{ .Values.secret.readOnly }}
             {{- end }}
             {{- if .Values.deployment.additionalVolumeMounts}}
-{{ toYaml .Values.deployment.additionalVolumeMounts | indent 12 }}
-            {{- end }}
-          {{- if .Values.nexusProxy.enabled }}
+            {{ toYaml .Values.deployment.additionalVolumeMounts | indent 12 }}
+          {{- end }}
+        {{- if .Values.nexusProxy.enabled }}
         - name: nexus-proxy
           image: {{ .Values.nexusProxy.imageName }}:{{ .Values.nexusProxy.imageTag }}
           resources:
-{{ toYaml .Values.nexusProxy.resources | indent 12 }}
+          {{ toYaml .Values.nexusProxy.resources | indent 12 }}
           imagePullPolicy: {{ .Values.nexusProxy.imagePullPolicy }}
           env:
             - name: ALLOWED_USER_AGENTS_ON_ROOT_REGEX
@@ -169,7 +169,7 @@ spec:
               value: "86400000"
             - name: JWT_REQUIRES_MEMBERSHIP_VERIFICATION
               value: {{ .Values.nexusProxy.env.requiredMembershipVerification | quote }}
-            {{- end }}
+          {{- end }}
           ports:
             - containerPort: {{ .Values.nexusProxy.targetPort }}
               name: nexus-proxy
@@ -179,13 +179,13 @@ spec:
               name: {{ template "nexus.proxy-ks.name" . }}
               readOnly: true
           {{- end }}
-          {{- end }}
+        {{- end }}
         {{- if .Values.nexusBackup.enabled }}
         - name: nexus-backup
           image: {{ .Values.nexusBackup.imageName }}:{{ .Values.nexusBackup.imageTag }}
           imagePullPolicy: {{ .Values.nexusBackup.imagePullPolicy }}
           resources:
-{{ toYaml .Values.nexusBackup.resources | indent 12 }}
+          {{ toYaml .Values.nexusBackup.resources | indent 12 }}
           env:
             - name: NEXUS_AUTHORIZATION
               valueFrom:
@@ -213,13 +213,18 @@ spec:
               name: {{ template "nexus.fullname" . }}-data
             - mountPath: /nexus-data/backup
               name: {{ template "nexus.fullname" . }}-backup
+            {{- if .Values.secret.enabled }}
+            - mountPath: {{ .Values.secret.mountPath }}
+              name: {{ template "nexus.fullname" . }}-secret
+              readOnly: {{ .Values.secret.readOnly }}
+        {{- end }}
         {{- end }}
         {{- if .Values.deployment.additionalContainers }}
-{{ toYaml .Values.deployment.additionalContainers | indent 8 }}
-        {{- end }}
+        {{ toYaml .Values.deployment.additionalContainers | indent 8 }}
+      {{- end }}
       {{- if .Values.nexus.securityContext }}
       securityContext:
-{{ toYaml .Values.nexus.securityContext | indent 8 }}
+      {{ toYaml .Values.nexus.securityContext | indent 8 }}
       {{- end }}
       volumes:
         {{- if .Values.nexusProxy.env.cloudIamAuthEnabled }}
@@ -244,14 +249,14 @@ spec:
             claimName: {{ .Values.persistence.existingClaim | default (printf "%s-%s" (include "nexus.fullname" .) "data") }}
           {{- else }}
           emptyDir: {}
-          {{- end }}
+        {{- end }}
         - name: {{ template "nexus.fullname" . }}-backup
           {{- if and .Values.nexusBackup.enabled (.Values.nexusBackup.persistence.enabled) }}
           persistentVolumeClaim:
             claimName: {{ .Values.nexusBackup.persistence.existingClaim | default (printf "%s-%s" (include "nexus.fullname" .) "backup") }}
           {{- else }}
           emptyDir: {}
-          {{- end }}
+        {{- end }}
         {{- end }}
         {{- if .Values.config.enabled }}
         - name: {{ template "nexus.fullname" . }}-conf
@@ -264,26 +269,26 @@ spec:
             secretName: {{ template "nexus.fullname" . }}-secret
         {{- end }}
         {{- if .Values.deployment.additionalVolumes }}
-{{ toYaml .Values.deployment.additionalVolumes | indent 8 }}
-        {{- end }}
-    {{- with .Values.tolerations }}
+        {{ toYaml .Values.deployment.additionalVolumes | indent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
       tolerations:
-{{ toYaml . | indent 8 }}
-    {{- end }}
+    {{ toYaml . | indent 8 }}
+  {{- end }}
 
 
-## create pvc in case of statefulsets
+  ## create pvc in case of statefulsets
   {{- if .Values.statefulset.enabled }}
   volumeClaimTemplates:
     {{- if .Values.persistence.enabled }}
     - metadata:
         name: {{ template "nexus.fullname" . }}-data
         labels:
-{{ include "nexus.labels" . | indent 10 }}
+        {{ include "nexus.labels" . | indent 10 }}
         {{- if .Values.persistence.annotations }}
         annotations:
-{{ toYaml .Values.persistence.annotations | indent 10 }}
-        {{- end }}
+        {{ toYaml .Values.persistence.annotations | indent 10 }}
+      {{- end }}
       spec:
         accessModes:
           - {{ .Values.persistence.accessMode | quote }}
@@ -296,18 +301,18 @@ spec:
         {{- else }}
         storageClassName: "{{ .Values.persistence.storageClass }}"
         {{- end }}
-        {{- end }}
+    {{- end }}
     {{- end }}
 
     {{- if and .Values.nexusBackup.enabled (.Values.nexusBackup.persistence.enabled) }}
     - metadata:
         name: {{ template "nexus.fullname" . }}-backup
         labels:
-{{ include "nexus.labels" . | indent 10 }}
+        {{ include "nexus.labels" . | indent 10 }}
         {{- if .Values.nexusBackup.persistence.annotations }}
         annotations:
-{{ toYaml .Values.nexusBackup.persistence.annotations | indent 10 }}
-        {{- end }}
+        {{ toYaml .Values.nexusBackup.persistence.annotations | indent 10 }}
+      {{- end }}
       spec:
         accessModes:
           - {{ .Values.nexusBackup.persistence.accessMode }}
@@ -320,6 +325,6 @@ spec:
         {{- else }}
         storageClassName: "{{ .Values.nexusBackup.persistence.storageClass }}"
         {{- end }}
-        {{- end }}
     {{- end }}
+  {{- end }}
   {{- end }}
