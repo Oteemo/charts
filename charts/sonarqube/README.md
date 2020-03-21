@@ -81,15 +81,15 @@ The following table lists the configurable parameters of the Sonarqube chart and
 | `sonarProperties`                     | Custom `sonar.properties` file                                               | `{}`                                           |
 | `database.type`                       | Set to "mysql" to use mysql database                                         | `postgresql`                                   |
 | `postgresql.enabled`                  | Set to `false` to use external server / mysql database                       | `true`                                         |
+| `postgresql.existingSecret`           | Secret containing the password of the external Postgresql server             | `null`                                         |
 | `postgresql.postgresqlServer`         | Hostname of the external Postgresql server                                   | `null`                                         |
-| `postgresql.postgresqlPasswordSecret` | Secret containing the password of the external Postgresql server             | `null`                                         |
 | `postgresql.postgresqlUsername`       | Postgresql database user                                                     | `sonarUser`                                    |
 | `postgresql.postgresqlPassword`       | Postgresql database password                                                 | `sonarPass`                                    |
 | `postgresql.postgresqlDatabase`       | Postgresql database name                                                     | `sonarDB`                                      |
 | `postgresql.service.port`             | Postgresql port                                                              | `5432`                                         |
 | `mysql.enabled`                       | Set to `false` to use external server / postgresql database                  | `false`                                        |
+| `mysql.existingSecret`                | Secret containing the password of the external Mysql server                  | `null`                                         |
 | `mysql.mysqlServer`                   | Hostname of the external Mysql server                                        | `null`                                         |
-| `mysql.mysqlPasswordSecret`           | Secret containing the password of the external Mysql server                  | `null`                                         |
 | `mysql.mysqlUser`                     | Mysql database user                                                          | `sonarUser`                                    |
 | `mysql.mysqlPassword`                 | Mysql database password                                                      | `sonarPass`                                    |
 | `mysql.mysqlDatabase`                 | Mysql database name                                                          | `sonarDB`                                      |
@@ -112,6 +112,7 @@ The following table lists the configurable parameters of the Sonarqube chart and
 | `plugins.deleteDefaultPlugins`        | Remove default plugins and use plugins.install list                          | `[]`                                           |
 | `podLabels`                           | Map of labels to add to the pods                                             | `{}`                                           |
 | `sonarqubeFolder`                     | Directory name of Sonarqube                                                  | `/opt/sonarqube`                               |
+| `enableTests`                         | Flag that allows tests to be excluded from generated yaml                    | true                                           |
 
 You can also configure values for the PostgreSQL / MySQL database via the Postgresql [README.md](https://github.com/kubernetes/charts/blob/master/stable/postgresql/README.md) / MySQL [README.md](https://github.com/kubernetes/charts/blob/master/stable/mysql/README.md)
 
