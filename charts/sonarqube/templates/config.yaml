@@ -15,7 +15,7 @@ data:
   {{- if or .Values.sonarProperties (not .Values.elasticsearch.bootstrapChecks) }}
   sonar.properties:
   {{ range $key, $val := .Values.sonarProperties }}
-    {{ $key }}={{ $val }}
+    {{ $val }}
   {{ end }}
   {{- if not .Values.elasticsearch.bootstrapChecks }}
     sonar.es.bootstrap.checks.disable=true
