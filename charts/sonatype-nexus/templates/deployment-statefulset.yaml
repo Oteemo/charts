@@ -27,7 +27,7 @@ spec:
   {{- end }}
   {{- if .Values.deploymentStrategy }}
   strategy:
-{{ toYaml .Values.deploymentStrategy | indent 4 }}
+    type: {{ .Values.deploymentStrategy }}
   {{- end }}
   selector:
     matchLabels:
