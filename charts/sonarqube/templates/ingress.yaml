@@ -25,6 +25,15 @@ metadata:
 {{- end }}
 spec:
   rules:
+    {{- range .Values.additionalIngress.hosts }}
+    - host: {{ .name }}
+      http:
+        paths:
+          - path: {{ .path}}
+            backend:
+              serviceName: {{ .serviceName }}
+              servicePort: {{ .servicePort }}
+    {{- end -}}
     {{- range .Values.ingress.hosts }}
     - host: {{ .name }}
       http:

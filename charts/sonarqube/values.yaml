@@ -56,7 +56,14 @@ ingress:
   # - secretName: chart-example-tls
   #   hosts:
   #     - chart-example.local
-
+# additionalIngress:
+#   # Used to create an additonal Ingress record with more control of serviceName/servicePort.
+#   hosts:
+#     - name: sonar.organization.com
+#       serviceName:
+#       servicePort:
+#       # Different clouds or configurations might need /* as the default path
+#       path: /
 # Affinity for pod assignment
 # Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
 affinity: {}
