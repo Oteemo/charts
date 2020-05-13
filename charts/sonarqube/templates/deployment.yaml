@@ -125,9 +125,11 @@ spec:
               subPath: tmp
             - name: install-plugins
               mountPath: /tmp/scripts/
+          {{- if .Values.env }}
           {{- with .Values.env }}
           env:
             {{- . | toYaml | trim | nindent 12 }}
+          {{- end }}
           {{- end }}
           resources:
 {{ toYaml .Values.plugins.resources | indent 12 }}
