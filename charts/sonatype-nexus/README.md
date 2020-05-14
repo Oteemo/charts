@@ -203,6 +203,27 @@ you can change the `values.yaml` to disable persistence which will use an `empty
 
 You must enable StatefulSet (`statefulset.enabled=true`) for true data persistence. If using Deployment approach, you can not recover data after restart or delete of helm chart. Statefulset will make sure that it picks up the same old volume which was used by the previous life of the nexus pod, helping you recover your data. When enabling statefulset, its required to enable the persistence.
 
+### Nexus community plugins
+
+If you rely on community plugins (for example PHP Composer) you need to ensure that these .kar files are present in Nexus. One solution would be to utilize an initContainer which downloads the plugin and saves it into a mounted volume which then is mounted in the Nexus container. In the following example we utilize a busybox to wget the file into a emptyDir based volume mount.
+```yaml
+deployment:
+  initContainers:
+  - name: nexus-download-plugins
+    image: busybox
+    imagePullPolicy: IfNotPresent
+    command: ["/bin/sh", "-c"]
+    args: ['wget -O /nexus-plugins/nexus-repository-composer-0.0.7-bundle.kar https://search.maven.org/remotecontent?filepath=org/sonatype/nexus/plugins/nexus-repository-composer/0.0.7/nexus-repository-composer-0.0.7-bundle.kar']
+    volumeMounts:
+      - name: nexus-plugins
+        mountPath: /nexus-plugins
+  additionalVolumes:
+  - name: nexus-plugins
+    emptyDir: {}
+  additionalVolumeMounts:
+  - mountPath: /opt/sonatype/nexus/deploy
+    name: nexus-plugins
+```
 
 ### Recommended settings
 
