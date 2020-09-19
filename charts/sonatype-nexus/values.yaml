@@ -94,7 +94,7 @@ nexusProxy:
   imageTag: 2.6.0
   imagePullPolicy: IfNotPresent
   port: 8080
-  targetPort: 8080
+  targetPort: 8081
   # labels: {}
   env:
     nexusDockerHost:
