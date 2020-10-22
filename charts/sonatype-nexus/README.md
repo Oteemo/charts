@@ -6,6 +6,7 @@
 
 This chart bootstraps a Nexus OSS deployment on a cluster using Helm.
 This setup is best configured in [GCP](https://cloud.google.com/) since:
+
 - [google cloud storage](https://cloud.google.com/storage/) is used for backups
 - [GCE Ingress controller](https://github.com/kubernetes/ingress/blob/master/docs/faq/gce.md) is used for using a pre-allocated static IP in GCE.
 
@@ -13,22 +14,28 @@ There is also the option of using a [proxy for Nexus](https://github.com/travela
 
 ## Prerequisites
 
-- Kubernetes 1.8+ with Beta APIs enabled
+- Kubernetes 1.15+ with Beta APIs enabled
 - PV provisioner support in the underlying infrastructure
 - [Fulfill Nexus kubernetes requirements](https://github.com/travelaudience/kubernetes-nexus#pre-requisites)
 
 ### With GCP IAM enabled
+
 All the [Prerequisites](#Prerequisites) should be in place, plus:
+
 - [Fulfill GCP IAM requirements](https://github.com/travelaudience/kubernetes-nexus/blob/master/docs/admin/configuring-nexus-proxy.md#pre-requisites)
 
 ## Testing the Chart
+
 To test the chart:
+
 ```bash
-$ helm install --dry-run --debug ./
+helm install --dry-run --debug ./
 ```
+
 To test the chart with your own values:
+
 ```bash
-$ helm install --dry-run --debug -f my_values.yaml ./
+helm install --dry-run --debug -f my_values.yaml ./
 ```
 
 ## Installing the Chart
@@ -36,7 +43,8 @@ $ helm install --dry-run --debug -f my_values.yaml ./
 To install the chart:
 
 ```bash
-$ helm install oteemo.github.io/charts/sonatype-nexus
+helm repo add oteemocharts https://oteemo.github.io/charts
+helm install sonatype-nexus oteemocharts/sonatype-nexus
 ```
 
 The above command deploys Nexus on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
@@ -49,8 +57,8 @@ To uninstall/delete the deployment:
 
 ```bash
 $ helm list
-NAME           	REVISION	UPDATED                 	STATUS  	CHART      	NAMESPACE
-plinking-gopher	1       	Fri Sep  1 13:19:50 2017	DEPLOYED	sonatype-nexus-0.1.0	default
+NAME           REVISION   UPDATED                   STATUS    CHART                 NAMESPACE
+plinking-gopher 1         Fri Sep  1 13:19:50 2017  DEPLOYED  sonatype-nexus-0.1.0 default
 $ helm delete plinking-gopher
 ```
 
@@ -60,20 +68,24 @@ The command removes all the Kubernetes components associated with the chart and 
 
 There are known issues with backups on the official image. If you want to swap in the official image, just override the values when installing the chart. Please note that backups will not work as expected with the official image.
 
-* [https://issues.sonatype.org/browse/NEXUS-23442](https://issues.sonatype.org/browse/NEXUS-23442)
-* [https://github.com/travelaudience/docker-nexus](https://github.com/travelaudience/docker-nexus)
+- [https://issues.sonatype.org/browse/NEXUS-23442](https://issues.sonatype.org/browse/NEXUS-23442)
+- [https://github.com/travelaudience/docker-nexus](https://github.com/travelaudience/docker-nexus)
 
 ## Configuration
 
 The following table lists the configurable parameters of the Nexus chart and their default values.
 
-| Parameter                                   | Description                         | Default                                 |
-| ------------------------------------------  | ----------------------------------  | ----------------------------------------|
-| `statefulset.enabled`                       | Use statefulset instead of deployment | `false` |
-| `replicaCount`                              | Number of Nexus service replicas    | `1`                                     |
-| `deploymentStrategy`                        | Deployment Strategy     |  `rollingUpdate` |
+| Parameter                                                     | Description                         | Default                                 |
+| ------------------------------------------------------------  | ----------------------------------  | ----------------------------------------|
+| `namespaceOverride`                                           | Override for namespace              | `nil` |
+| `statefulset.enabled`                                         | Use statefulset instead of deployment | `false` |
+| `replicaCount`                                                | Number of Nexus service replicas    | `1`                                     |
+| `deploymentStrategy`                                          | Deployment Strategy     |  `rollingUpdate` |
+| `initAdminPassword.enabled`                 | Enable initialization of admin password on Helm install | `false`    |
+| `initAdminPassword.defaultPasswordOverride` | Override the default admin password                     | `nil`      |
+| `initAdminPassword.password`                | Admin password to be set                                | `admin321` |
 | `nexus.imageName`                           | Nexus image                         | `quay.io/travelaudience/docker-nexus`   |
-| `nexus.imageTag`                            | Version of Nexus                    | `3.21.2-03`                                 |
+| `nexus.imageTag`                            | Version of Nexus                    | `3.25.1`                                 |
 | `nexus.imagePullPolicy`                     | Nexus image pull policy             | `IfNotPresent`                          |
 | `nexus.imagePullSecret`                     | Secret to download Nexus image from private registry      | `nil`             |
 | `nexus.env`                                 | Nexus environment variables         | `[{install4jAddVmParams: -Xms1200M -Xmx1200M -XX:MaxDirectMemorySize=2G -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap}]` |
@@ -82,6 +94,7 @@ The following table lists the configurable parameters of the Nexus chart and the
 | `nexus.nexusPort`                           | Internal port for Nexus service     | `8081`                                  |
 | `nexus.service.type`                        | Service for Nexus                   |`CluserIP`                                |
 | `nexus.service.clusterIp`                   | Specific cluster IP when service type is cluster IP. Use None for headless service |`nil`   |
+| `nexus.service.loadBalancerIP`                        | Custom loadBalancerIP                   |`nil`                                |
 | `nexus.securityContextEnabled`                     | Security Context (for enabling official image use `fsGroup: 200`) | `{}`     |
 | `nexus.labels`                              | Service labels                      | `{}`                                    |
 | `nexus.podAnnotations`                      | Pod Annotations                     | `{}`
@@ -96,6 +109,7 @@ The following table lists the configurable parameters of the Nexus chart and the
 | `nexus.readinessProbe.timeoutSeconds`       | Time in seconds after readiness probe times out    | `nil`                    |
 | `nexus.readinessProbe.path`                 | Path for ReadinessProbe             | /                                       |
 | `nexus.hostAliases`                         | Aliases for IPs in /etc/hosts       | []                                      |
+| `nexus.context`                             | Non-root path to run Nexus at       | `nil`                                   |
 | `nexusProxy.enabled`                        | Enable nexus proxy                  | `true`                                  |
 | `nexusProxy.svcName`                        | Nexus proxy service name            | `nil`                                  |
 | `nexusProxy.targetPort`                     | Container Port for Nexus proxy      | `8080`                                  |
@@ -123,6 +137,9 @@ The following table lists the configurable parameters of the Nexus chart and the
 | `nexusBackup.imageTag`                      | Nexus backup image version          | `1.5.0`                                 |
 | `nexusBackup.imagePullPolicy`               | Backup image pull policy            | `IfNotPresent`                          |
 | `nexusBackup.env.targetBucket`              | Required if `nexusBackup` is enabled. Google Cloud Storage bucker for backups format `gs://BACKUP_BUCKET`  | `nil`  |
+| `nexusBackup.env.nexusAuthorization`        | If set, `nexusBackup.nexusAdminPassword` will be disregarded. | `nil`  |
+| `nexusBackup.env.offlineRepos`              | Space separated list of repositories must be taken down to achieve a consistent backup. | `"maven-central maven-public maven-releases maven-snapshots"`  |
+| `nexusBackup.env.gracePeriod`               | The amount of time in seconds to wait between stopping repositories and starting the upload. | `60`  |
 | `nexusBackup.nexusAdminPassword`            | Nexus admin password used by the backup container to access Nexus API. This password should match the one that gets chosen by the user to replace the default admin password after the first login  | `admin123`                |
 | `nexusBackup.persistence.enabled`           | Create a volume for backing Nexus configuration  | `true`                     |
 | `nexusBackup.persistence.accessMode`        | ReadWriteOnce or ReadOnly           | `ReadWriteOnce`                         |
@@ -136,6 +153,11 @@ The following table lists the configurable parameters of the Nexus chart and the
 | `ingress.tls.enabled`                       | Enable TLS                          | `true`                                 |
 | `ingress.tls.secretName`                    | Name of the secret storing TLS cert, `false` to use the Ingress' default certificate | `nexus-tls`                             |
 | `ingress.path`                              | Path for ingress rules. GCP users should set to `/*` | `/`                    |
+| `ingressDocker.enabled`                           | Create an ingress for Docker registry         | `false`                                  |
+| `ingressDocker.annotations`                       | Annotations to enhance docker ingress configuration  | `{}`                          |
+| `ingressDocker.tls.enabled`                       | Enable TLS                          | `true`                                 |
+| `ingressDocker.tls.secretName`                    | Name of the secret storing TLS cert, `false` to use the Ingress' default certificate | `nexus-tls`                             |
+| `ingressDocker.path`                              | Path for docker ingress rules. GCP users should set to `/*` | `/`                    |
 | `tolerations`                               | tolerations list                    | `[]`                                    |
 | `config.enabled`                            | Enable configmap                    | `false`                                 |
 | `config.mountPath`                          | Path to mount the config            | `/sonatype-nexus-conf`                  |
@@ -149,18 +171,22 @@ The following table lists the configurable parameters of the Nexus chart and the
 | `secret.enabled`                            | Enable secret                    | `false`                                    |
 | `secret.mountPath`                          | Path to mount the secret         | `/etc/secret-volume`                       |
 | `secret.readOnly`                           | Secret readonly state            | `true`                                     |
-| `secret.data`                               | Secret data                      | `nil`                                      |
+| `secret.data`                               | Secret data to add to secret. If nil then expects that a secret by name of `${.Values.nameOverride}-secret` or `${.Chart.Name}-secret` exists                      | `nil`                                      |
 | `service.enabled`                           | Enable additional service        | `nil`                                      |
 | `service.name`                              | Service name                     | `nil`                                      |
 | `service.portName`                          | Service port name                | `nil`                                      |
 | `service.labels`                            | Service labels                   | `nil`                                      |
 | `service.annotations`                       | Service annotations              | `nil`                                      |
 | `service.loadBalancerSourceRanges`          | Service LoadBalancer source IP whitelist | `nil`                              |
+| `service.loadBalancerIP`                        | Custom loadBalancerIP                   |`nil`                                |
 | `service.targetPort`                        | Service port                     | `nil`                                      |
 | `service.port`                              | Port for exposing service        | `nil`                                      |
 | `serviceAccount.create`                     | Automatically create a service account | `true`                               |
-| `serviceAccount.name`                       | Service account to use 				   | `nil`								  |
-| `serviceAccount.annotations`                | Service account annotations			   | `nil`	   							  |
+| `serviceAccount.name`                       | Service account to use           | `nil`  |
+| `serviceAccount.annotations`                | Service account annotations  | `nil` |
+| `rbac.create`                               | Creates a ClusterRoleBinding attached to the Service account. | `false` |
+| `rbac.roleRef`                              | ClusterRoleBinding field `roleRef` content. See examples [here](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#rolebinding-example). | `nil` |
+| `rbac.annotations`                          | ClusterRoleBinding annotations.  | `nil` |
 | `route.enabled`         | Set to true to create route for additional service | `false` |
 | `route.name`            | Name of route                                      | `docker` |
 | `route.portName`        | Target port name of service                        | `docker` |
@@ -181,16 +207,16 @@ If `nexusProxy.env.cloudIamAuthEnabled` is set to `true` the following variables
 | `nexusProxy.secrets.keystore`    | base-64 encoded value of the keystore file needed for the proxy to sign user tokens. Example: cat keystore.jceks &#124; base64 | `nil`  |
 | `nexusProxy.secrets.password`    | Password to the Java Keystore file | `nil`                                                |
 
-
 ```bash
-$ helm install --name my-release --set persistence.enabled=false stable/sonatype-nexus
+helm install --set persistence.enabled=false my-release stable/sonatype-nexus
 ```
+
 The above example turns off the persistence. Data will not be kept between restarts or deployments
 
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
 
 ```bash
-$ helm install --name my-release -f my-values.yaml stable/sonatype-nexus
+helm install -f my-values.yaml sonatype-nexus stable/sonatype-nexus
 ```
 
 ### Persistence
@@ -199,7 +225,6 @@ By default a PersistentVolumeClaim is created and mounted into the `/nexus-data`
 you can change the `values.yaml` to disable persistence which will use an `emptyDir` instead.
 
 > *"An emptyDir volume is first created when a Pod is assigned to a Node, and exists as long as that Pod is running on that node. When a Pod is removed from a node for any reason, the data in the emptyDir is deleted forever."*
-
 
 You must enable StatefulSet (`statefulset.enabled=true`) for true data persistence. If using Deployment approach, you can not recover data after restart or delete of helm chart. Statefulset will make sure that it picks up the same old volume which was used by the previous life of the nexus pod, helping you recover your data. When enabling statefulset, its required to enable the persistence.
 
@@ -266,22 +291,28 @@ resources:
 ```
 
 ## After Installing the Chart
+
 After installing the chart a couple of actions need still to be done in order to use nexus. Please follow the instructions below.
 
 ### Nexus Configuration
+
 The following steps need to be executed in order to use Nexus:
 
 - [Configure Nexus](https://github.com/travelaudience/kubernetes-nexus/blob/master/docs/admin/configuring-nexus.md)
 - [Configure Backups](https://github.com/travelaudience/kubernetes-nexus/blob/master/docs/admin/configuring-nexus.md#configure-backup)
 
 and if GCP IAM authentication is enabled, please also check:
-- [Enable GCP IAM authentication in Nexus ](https://github.com/travelaudience/kubernetes-nexus/blob/master/docs/admin/configuring-nexus-proxy.md#enable-gcp-iam-auth)
+
+- [Enable GCP IAM authentication in Nexus](https://github.com/travelaudience/kubernetes-nexus/blob/master/docs/admin/configuring-nexus-proxy.md#enable-gcp-iam-auth)
 
 ### Nexus Usage
+
 To see how to use Nexus with different tools like Docker, Maven, Python, and so on please check:
 
 - [Nexus Usage](https://github.com/travelaudience/kubernetes-nexus#usage)
 
 ### Disaster Recovery
+
 In a disaster recovery scenario, the latest backup made by the nexus-backup container should be restored. In order to achieve this please follow the procedure described below:
+
 - [Restore Backups](https://github.com/travelaudience/kubernetes-nexus#restore)

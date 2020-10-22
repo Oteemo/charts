@@ -8,9 +8,15 @@ deploymentStrategy: {}
 # Uncomment this to scheduler pods on priority
 # priorityClassName: "high-priority"
 
+## Use an alternate scheduler, e.g. "stork".
+## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
+##
+# schedulerName:
+
 image:
   repository: sonarqube
-  tag: 8.2-community
+  tag: 8.5-community
+  pullPolicy: IfNotPresent
   # If using a private repository, the name of the imagePullSecret to use
   # pullSecret: my-repo-secret
 
@@ -20,6 +26,7 @@ securityContext:
 
 # Settings to configure elasticsearch host requirements
 elasticsearch:
+  # DEPRECATED: Use initSysctl.enabled instead
   configureNode: true
   bootstrapChecks: true
 
@@ -97,11 +104,50 @@ livenessProbe:
   # If an ingress *path* is defined, it should be reflected here
   # sonar.web.context: /sonarqube
 
+initContainers:
+  # image: busybox:1.32
+  # We allow the init containers to have a separate security context declaration because
+  # the initContainer may not require the same as SonarQube.
+  # securityContext: {}
+  # We allow the init containers to have a separate resources declaration because
+  # the initContainer does not take as much resources.
+  resources: {}
+
 ## Provide a secret containing one or more certificate files in the keys that will be added to cacerts
-## The cacerts file will be set via SONARQUBE_WEB_JVM_OPTS
+## The cacerts file will be set via SONARQUBE_WEB_JVM_OPTS and SONAR_CE_JAVAOPTS
 ##
 # caCerts:
-#   secret: my-secret
+  # image: adoptopenjdk/openjdk11:alpine
+  # secret: my-secret
+
+initSysctl:
+  enabled: true
+  vmMaxMapCount: 524288
+  fsFileMax: 131072
+  nofile: 131072
+  nproc: 8192
+  # image: busybox:1.32
+  securityContext:
+    privileged: true
+  # resources: {}
+
+# List of plugins to install.
+# For example:
+# plugins:
+#  install:
+#    - "https://github.com/AmadeusITGroup/sonar-stash/releases/download/1.3.0/sonar-stash-plugin-1.3.0.jar"
+#    - "https://github.com/SonarSource/sonar-ldap/releases/download/2.2-RC3/sonar-ldap-plugin-2.2.0.601.jar"
+plugins:
+  install: []
+  lib: []
+
+  # For use behind a corporate proxy when downloading plugins
+  # httpProxy: ""
+  # httpsProxy: ""
+  # noProxy: ""
+
+  # image: rjkernick/alpine-wget:latest
+  # resources: {}
 
 ## Values to add to SONARQUBE_WEB_JVM_OPTS
 ##
@@ -152,29 +198,11 @@ persistence:
   ## Specify extra mounts. Refer to ".spec.containers.volumeMounts" specification : https://kubernetes.io/fr/docs/concepts/storage/volumes/
   mounts: []
 
-# List of plugins to install.
-# For example:
-# plugins:
-#  install:
-#    - "https://github.com/AmadeusITGroup/sonar-stash/releases/download/1.3.0/sonar-stash-plugin-1.3.0.jar"
-#    - "https://github.com/SonarSource/sonar-ldap/releases/download/2.2-RC3/sonar-ldap-plugin-2.2.0.601.jar"
-plugins:
-  install: []
-  lib: []
-
-  # For use behind a corporate proxy when downloading plugins
-  # httpProxy: ""
-  # httpsProxy: ""
-
-  # initContainerImage: rjkernick/alpine-wget:latest
-  # initSysctlContainerImage: busybox:1.31
-  # initVolumesContainerImage: busybox:1.31
-  # initCertsContainerImage: adoptopenjdk/openjdk11:alpine
-  # initTestContainerImage: dduportal/bats:0.4.0
-  # deleteDefaultPlugins: true
-  resources: {}
-  # We allow the plugins init container to have a separate resources declaration because
-  # the initContainer does not take as much resources.
+# In case you want to specify different resources for emptyDir than {}
+emptyDir: {}
+  # Example of resouces that might be used:
+  # medium: Memory
+  # sizeLimit: 16Mi
 
 # A custom sonar.properties file can be provided via dictionary.
 # For example:
@@ -190,6 +218,12 @@ plugins:
 # The secret must contain the key 'sonar-secret.txt'.
 # The 'sonar.secretKeyPath' property will be set automatically.
 # sonarSecretKey: "settings-encryption-secret"
+
+## JDBC Database Type; by default postgresql. To use a different Database type, adjust
+jdbcDatabaseType: postgresql
+
+## Override JDBC URL
+# jdbcUrlOverride: "jdbc:postgresql://myPostgress/myDatabase;socketTimeout=1500"
 
 ## Configuration values for postgresql dependency
 ## ref: https://github.com/kubernetes/charts/blob/master/stable/postgresql/README.md
@@ -218,10 +252,42 @@ podLabels: {}
 # For compatibility with 8.2, leave the default. They changed it back to /opt/sonarqube
 sonarqubeFolder: /opt/sonarqube
 
-enableTests: true
+tests:
+  enabled: true
+  # image: bitnami/minideb-extras
 
 serviceAccount:
   create: false
   # name:
   ## Annotations for the Service Account
   annotations: {}
+
+# extraConfig is used to load Environment Variables from Secrets and ConfigMaps
+# which may have been written by other tools, such as external orchestrators.
+#
+# These Secrets/ConfigMaps are expected to contain Key/Value pairs, such as:
+#
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: external-sonarqube-opts
+# data:
+#   SONARQUBE_JDBC_USERNAME: foo
+#   SONARQUBE_JDBC_URL: jdbc:postgresql://db.example.com:5432/sonar
+#
+# These vars can then be injected into the environment by uncommenting the following:
+#
+# extraConfig:
+#   configmaps:
+#     - external-sonarqube-opts
+
+extraConfig:
+  secrets: []
+  configmaps: []
+
+# account:
+#   adminPassword: admin
+#   currentAdminPassword: admin
+# curlContainerImage: curlimages/curl:latest
+
+terminationGracePeriodSeconds: 60

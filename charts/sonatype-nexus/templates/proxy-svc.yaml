@@ -7,6 +7,7 @@ metadata:
 {{- else }}
   name: {{ template "nexus.fullname" . }}
 {{- end }}
+  namespace: {{ template "nexus.namespace" . }}
   labels:
 {{ include "nexus.labels" . | indent 4 }}
 {{- if .Values.nexus.labels }}
@@ -43,5 +44,8 @@ spec:
   type: {{ .Values.nexus.service.type }}
   {{- if and (eq .Values.nexus.service.type "ClusterIP") .Values.nexus.service.clusterIP }}
   clusterIP: {{ .Values.nexus.service.clusterIP }}
+  {{- end }}
+  {{- if and (eq .Values.nexus.service.type "LoadBalancer") .Values.nexus.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.nexus.service.loadBalancerIP }}
   {{- end }}
 {{- end }}

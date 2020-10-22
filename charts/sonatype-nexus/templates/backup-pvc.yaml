@@ -1,9 +1,10 @@
-{{- if not .Values.statefulset.enabled }}
+{{- if and .Values.nexusBackup.enabled (not .Values.statefulset.enabled) }}
 {{- if and .Values.nexusBackup.persistence.enabled (not .Values.nexusBackup.persistence.existingClaim) }}
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: {{ template "nexus.fullname" . }}-backup
+  namespace: {{ template "nexus.namespace" . }}
   labels:
 {{ include "nexus.labels" . | indent 4 }}
 {{- if .Values.nexusBackup.persistence.annotations }}

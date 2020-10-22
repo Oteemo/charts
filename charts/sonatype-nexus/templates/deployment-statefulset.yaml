@@ -7,6 +7,7 @@ kind: Deployment
 {{- end }}
 metadata:
   name: {{ template "nexus.fullname" . }}
+  namespace: {{ template "nexus.namespace" . }}
   labels:
 {{ include "nexus.labels" . | indent 4 }}
 {{- if .Values.nexus.labels }}
@@ -59,10 +60,10 @@ spec:
       imagePullSecrets:
         - name: {{ .Values.nexus.imagePullSecret }}
       {{- end }}
-      {{- if .Values.serviceAccount.create }}
-      serviceAccountName: {{ template "nexus.fullname" . }}
-      {{- else }}
+      {{- if .Values.serviceAccount.name }}
       serviceAccountName: {{ .Values.serviceAccount.name | quote }}
+      {{- else if .Values.serviceAccount.create }}
+      serviceAccountName: {{ template "nexus.fullname" . }}
       {{- end }}
       {{- if .Values.nexus.priorityClassName }}
       priorityClassName: {{ .Values.nexus.priorityClassName }}
@@ -79,6 +80,11 @@ spec:
           {{- end }}
           env:
 {{ toYaml .Values.nexus.env | indent 12 }}
+{{- if .Values.nexus.context }}
+            - name: NEXUS_CONTEXT
+              value: {{ .Values.nexus.context }}
+{{- end }}
+
           resources:
 {{ toYaml .Values.nexus.resources | indent 12 }}
           ports:
@@ -109,8 +115,10 @@ spec:
           volumeMounts:
             - mountPath: /nexus-data
               name: {{ template "nexus.fullname" . }}-data
+            {{- if .Values.nexusBackup.enabled }}
             - mountPath: /nexus-data/backup
               name: {{ template "nexus.fullname" . }}-backup
+            {{- end }}
             {{- if .Values.config.enabled }}
             - mountPath: {{ .Values.config.mountPath }}
               name: {{ template "nexus.name" . }}-conf
@@ -131,7 +139,7 @@ spec:
           imagePullPolicy: {{ .Values.nexusProxy.imagePullPolicy }}
           env:
             - name: ALLOWED_USER_AGENTS_ON_ROOT_REGEX
-              value: "GoogleHC"
+              value: {{ default "GoogleHC" .Values.nexusProxy.env.allowedUserAgentsOnRootRegex | quote }}
             - name: CLOUD_IAM_AUTH_ENABLED
               value: {{ .Values.nexusProxy.env.cloudIamAuthEnabled | quote }}
             - name: BIND_PORT
@@ -191,10 +199,14 @@ spec:
 {{ toYaml .Values.nexusBackup.resources | indent 12 }}
           env:
             - name: NEXUS_AUTHORIZATION
+            {{- if not .Values.nexusBackup.env.nexusAuthorization }}
               valueFrom:
                 secretKeyRef:
                   key: nexus.nexusAdminPassword
                   name: {{ template "nexus.fullname" . }}
+            {{- else }}
+              value: {{ .Values.nexusBackup.env.nexusAuthorization | quote }}
+            {{- end }}
             - name: NEXUS_BACKUP_DIRECTORY
               value: /nexus-data/backup
             - name: NEXUS_DATA_DIRECTORY
@@ -202,11 +214,11 @@ spec:
             - name: NEXUS_LOCAL_HOST_PORT
               value: "localhost:{{ .Values.nexus.nexusPort }}"
             - name: OFFLINE_REPOS
-              value: "maven-central maven-public maven-releases maven-snapshots"
+              value: {{ .Values.nexusBackup.env.offlineRepos | quote }}
             - name: TARGET_BUCKET
               value: {{ .Values.nexusBackup.env.targetBucket | quote }}
             - name: GRACE_PERIOD
-              value: "60"
+              value: {{ .Values.nexusBackup.env.gracePeriod | quote }}
             - name: TRIGGER_FILE
               value: .backup
           volumeMounts:
@@ -234,7 +246,7 @@ spec:
         - name: {{ template "nexus.fullname" . }}-data
           emptyDir: {}
         {{- end }}
-        {{- if not .Values.nexusBackup.persistence.enabled }}
+        {{- if and .Values.nexusBackup.enabled (not .Values.nexusBackup.persistence.enabled) }}
         - name: {{ template "nexus.fullname" . }}-backup
           emptyDir: {}
         {{- end }}
@@ -246,13 +258,15 @@ spec:
           {{- else }}
           emptyDir: {}
           {{- end }}
+        {{- if .Values.nexusBackup.enabled }}
         - name: {{ template "nexus.fullname" . }}-backup
-          {{- if .Values.nexusBackup.persistence.enabled }}
+          {{- if and .Values.nexusBackup.persistence.enabled .Values.nexusBackup.enabled }}
           persistentVolumeClaim:
             claimName: {{ .Values.nexusBackup.persistence.existingClaim | default (printf "%s-%s" (include "nexus.fullname" .) "backup") }}
           {{- else }}
           emptyDir: {}
           {{- end }}
+        {{- end }}
         {{- end }}
         {{- if .Values.config.enabled }}
         - name: {{ template "nexus.name" . }}-conf

@@ -25,10 +25,14 @@ If release name contains chart name it will be used as a full name.
 {{- end -}}
 
 {{/*
-Create chart name and version as used by the chart label.
+Allow the release namespace to be overridden for multi-namespace deployments in combined charts.
 */}}
-{{- define "nexus.chart" -}}
-{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
+{{- define "nexus.namespace" -}}
+  {{- if .Values.namespaceOverride -}}
+    {{- .Values.namespaceOverride -}}
+  {{- else -}}
+    {{- .Release.Namespace -}}
+  {{- end -}}
 {{- end -}}
 
 {{/*
@@ -43,7 +47,14 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- define "nexus.labels" -}}
 app: {{ template "nexus.name" . }}
 fullname: {{ template "nexus.fullname" . }}
-chart: {{ template "nexus.chart" . }}
+chart: {{ .Chart.Name }}
 release: {{ .Release.Name }}
 heritage: {{ .Release.Service }}
+{{- end -}}
+
+{{/*
+Create a fully qualified name for docker ingress.
+*/}}
+{{- define "nexus.ingres.docker" -}}
+{{- printf "%s-%s" (include "nexus.fullname" .) "docker" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
