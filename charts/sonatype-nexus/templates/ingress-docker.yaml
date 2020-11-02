@@ -28,9 +28,8 @@ spec:
 {{- if .Values.nexusProxy.enabled }}
               servicePort: {{ .Values.nexusProxy.port }}
 {{- else }}
-              servicePort: {{ .Values.nexus.nexusPort }}
+              servicePort: {{ .Values.nexus.dockerPort }}
 {{- end }}
-              servicePort: {{ .Values.nexusProxy.port }}
             path: {{ .Values.ingress.path }}
   {{- end }}
   {{- with .Values.ingressDocker.rules }}
