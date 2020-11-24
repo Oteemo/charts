@@ -317,6 +317,7 @@ spec:
         {{- if .Values.deployment.additionalVolumes }}
 {{ toYaml .Values.deployment.additionalVolumes | indent 8 }}
         {{- end }}
+      terminationGracePeriodSeconds: {{ .Values.nexus.terminationGracePeriodSeconds }}
     {{- with .Values.tolerations }}
       tolerations:
 {{ toYaml . | indent 8 }}
