@@ -85,7 +85,7 @@ nexus:
   #   - "example.com"
   #   - "www.example.com"
   context:
-  terminationGracePeriodSeconds: 30
+  terminationGracePeriodSeconds: 120
 
 route:
   enabled: false

@@ -109,6 +109,7 @@ The following table lists the configurable parameters of the Nexus chart and the
 | `nexus.readinessProbe.failureThreshold`     | Number of attempts before failure   | 6                                       |
 | `nexus.readinessProbe.timeoutSeconds`       | Time in seconds after readiness probe times out    | `nil`                    |
 | `nexus.readinessProbe.path`                 | Path for ReadinessProbe             | /                                       |
+| `nexus.terminationGracePeriodSeconds`       | Let Nexus terminate gracefully      | 120                                     |
 | `nexus.hostAliases`                         | Aliases for IPs in /etc/hosts       | []                                      |
 | `nexus.context`                             | Non-root path to run Nexus at       | `nil`                                   |
 | `nexusProxy.enabled`                        | Enable nexus proxy                  | `true`                                  |
