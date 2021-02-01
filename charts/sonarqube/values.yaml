@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 replicaCount: 1
 
- # This will use the default deployment strategy unless it is overriden
+# This will use the default deployment strategy unless it is overriden
 deploymentStrategy: {}
 # Uncomment this to scheduler pods on priority
 # priorityClassName: "high-priority"
@@ -67,7 +67,7 @@ ingress:
   # This property allows for reports up to a certain size to be uploaded to SonarQube
   # nginx.ingress.kubernetes.io/proxy-body-size: "8m"
 
-# Additional labels for Ingress manifest file
+  # Additional labels for Ingress manifest file
   # labels:
   #  traffic-type: external
   #  traffic-type: internal
@@ -123,12 +123,28 @@ initContainers:
   # the initContainer does not take as much resources.
   resources: {}
 
-## Provide a secret containing one or more certificate files in the keys that will be added to cacerts
-## The cacerts file will be set via SONARQUBE_WEB_JVM_OPTS and SONAR_CE_JAVAOPTS
-##
-# caCerts:
+extraInitContainers: {}
+  # Extra init containers to e.g. download required artifacts
+  #  - name: "prometheus-exporter-downloader"
+  #    image: "busybox"
+  #    imagePullPolicy: "IfNotPresent"
+  #    securityContext:
+  #      runAsNonRoot: true
+  #    command:
+  #      - wget
+  #      - "-O"
+  #      - "/downloads/jmx_prometheus_javaagent.jar"
+  #      - ${JMX_EXPORTER_URL}
+  #    volumeMounts:
+  #      - name: "downloads"
+  #        mountPath: "/downloads"
+
+  ## Provide a secret containing one or more certificate files in the keys that will be added to cacerts
+  ## The cacerts file will be set via SONARQUBE_WEB_JVM_OPTS and SONAR_CE_JAVAOPTS
+  ##
+  # caCerts:
   # image: adoptopenjdk/openjdk11:alpine
-  # secret: my-secret
+# secret: my-secret
 
 initSysctl:
   enabled: true
@@ -215,7 +231,7 @@ persistence:
 emptyDir: {}
   # Example of resouces that might be used:
   # medium: Memory
-  # sizeLimit: 16Mi
+# sizeLimit: 16Mi
 
 # A custom sonar.properties file can be provided via dictionary.
 # For example:
