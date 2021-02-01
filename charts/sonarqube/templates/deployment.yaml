@@ -60,7 +60,7 @@ imagePullSecrets:
   {{- end }}
 initContainers:
   {{- if .Values.extraInitContainers }}
-  {{ toYaml .Values.extraInitContainers | indent 8 }}
+{{ toYaml .Values.extraInitContainers | indent 8 }}
   {{- end }}
   {{- if .Values.caCerts }}
 - name: ca-certs
