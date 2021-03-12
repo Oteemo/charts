@@ -56,6 +56,7 @@ ingress:
   # Used to create an Ingress record.
   hosts:
     - name: sonar.organization.com
+      # alb_ssl_redirect: true
       # Different clouds or configurations might need /* as the default path
       path: /
       # For additional control over serviceName and servicePort

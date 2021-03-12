@@ -38,6 +38,12 @@ spec:
     - host: {{ .name }}
       http:
         paths:
+          {{- if .alb_ssl_redirect }}
+          - path: /*
+            backend:
+              serviceName: ssl-redirect
+              servicePort: use-annotation
+          {{- end }}
           - path: {{ .path}}
             backend:
               serviceName: {{ default $serviceName .serviceName }}
