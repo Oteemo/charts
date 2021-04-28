@@ -207,6 +207,11 @@ resources: {}
 # requests:
 #  cpu: 100m
 #  memory: 128Mi
+
+
+statefulset: 
+  enabled: false
+
 persistence:
   enabled: false
   ## Set annotations on pvc
