@@ -99,7 +99,7 @@ route:
   portName: docker
   labels:
   annotations:
-  # path: /docker
+  # path: docker.apps.ocp01.cluster.local
 
 nexusProxy:
   enabled: true
