@@ -43,6 +43,9 @@ spec:
       labels:
         app: {{ template "nexus.name" . }}
         release: {{ .Release.Name }}
+        {{- if .Values.nexus.labels }}
+{{ toYaml .Values.nexus.labels | indent 8 }}
+        {{- end }}
     spec:
       {{- if .Values.deployment.initContainers }}
       initContainers:
@@ -78,8 +81,14 @@ spec:
               exec:
                 command: {{ .Values.deployment.postStart.command }}
           {{- end }}
+          {{- with .Values.nexus.envFrom }}
+          envFrom: 
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           env:
 {{ toYaml .Values.nexus.env | indent 12 }}
+            - name: NEXUS_DATA_CHOWN
+              value: {{ .Values.nexus.chownNexusData | quote }}
 {{- if .Values.nexus.context }}
             - name: NEXUS_CONTEXT
               value: {{ .Values.nexus.context }}
@@ -91,7 +100,10 @@ spec:
             - containerPort: {{ .Values.nexus.dockerPort }}
               name: nexus-docker-g
             - containerPort: {{ .Values.nexus.nexusPort }}
-              name: nexus-http
+              name: nexus-http        
+            {{- with .Values.nexus.additionalPorts  }}
+{{ toYaml . | indent 12 }}
+            {{- end }}
           livenessProbe:
             httpGet:
               path: {{ .Values.nexus.livenessProbe.path }}
@@ -185,6 +197,10 @@ spec:
             - name: JWT_REQUIRES_MEMBERSHIP_VERIFICATION
               value: {{ .Values.nexusProxy.env.requiredMembershipVerification | quote }}
             {{- end }}
+            {{- with .Values.nexusProxy.env.javaOptions }}
+            - name: JAVA_TOOL_OPTIONS
+              value: {{ . | quote }}
+            {{ end }}
           ports:
             - containerPort: {{ .Values.nexusProxy.targetPort }}
               name: nexus-proxy
@@ -317,9 +333,15 @@ spec:
         {{- if .Values.deployment.additionalVolumes }}
 {{ toYaml .Values.deployment.additionalVolumes | indent 8 }}
         {{- end }}
+    {{- if .Values.nexus.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ .Values.nexus.terminationGracePeriodSeconds }}
+    {{- end }}
     {{- with .Values.tolerations }}
       tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
 {{ toYaml . | indent 8 }}
     {{- end }}
 
@@ -332,6 +354,9 @@ spec:
         name: {{ template "nexus.fullname" . }}-data
         labels:
 {{ include "nexus.labels" . | indent 10 }}
+          {{- if .Values.nexus.labels }}
+{{ toYaml .Values.nexus.labels | indent 10 }}
+          {{- end }}
         {{- if .Values.persistence.annotations }}
         annotations:
 {{ toYaml .Values.persistence.annotations | indent 10 }}

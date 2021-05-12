@@ -93,6 +93,7 @@ The following table lists the configurable parameters of the Nexus chart and the
 | `nexus.resources`                           | Nexus resource requests and limits  | `{}`                                    |
 | `nexus.dockerPort`                          | Port to access docker               | `5003`                                  |
 | `nexus.nexusPort`                           | Internal port for Nexus service     | `8081`                                  |
+| `nexus.additionalPorts`                     | expose additional ports             | `[]`                                  |
 | `nexus.service.type`                        | Service for Nexus                   | `NodePort`                                |
 | `nexus.service.clusterIp`                   | Specific cluster IP when service type is cluster IP. Use None for headless service |`nil`   |
 | `nexus.service.loadBalancerIP`                        | Custom loadBalancerIP                   |`nil`                                |
@@ -109,9 +110,10 @@ The following table lists the configurable parameters of the Nexus chart and the
 | `nexus.readinessProbe.failureThreshold`     | Number of attempts before failure   | 6                                       |
 | `nexus.readinessProbe.timeoutSeconds`       | Time in seconds after readiness probe times out    | `nil`                    |
 | `nexus.readinessProbe.path`                 | Path for ReadinessProbe             | /                                       |
-| `nexus.terminationGracePeriodSeconds`       | Let Nexus terminate gracefully      | 120                                     |
 | `nexus.hostAliases`                         | Aliases for IPs in /etc/hosts       | []                                      |
 | `nexus.context`                             | Non-root path to run Nexus at       | `nil`                                   |
+| `nexus.chownNexusData`                      | Set false to not execute chown to the mounted nexus-data directory at startup | `true` |
+| `nexus.terminationGracePeriodSeconds`       | Let Nexus terminate gracefully [More informations here](#graceful-shutdown-with-terminationGracePeriodSeconds).     | `nil`                                   |
 | `nexusProxy.enabled`                        | Enable nexus proxy                  | `true`                                  |
 | `nexusProxy.svcName`                        | Nexus proxy service name            | `nil`                                  |
 | `nexusProxy.targetPort`                     | Container Port for Nexus proxy      | `8080`                                  |
@@ -164,11 +166,13 @@ The following table lists the configurable parameters of the Nexus chart and the
 | `ingress.annotations`                       | Annotations to enhance ingress configuration  | `{}`                          |
 | `ingress.tls.enabled`                       | Enable TLS                          | `true`                                 |
 | `ingress.tls.secretName`                    | Name of the secret storing TLS cert, `false` to use the Ingress' default certificate | `nexus-tls`                             |
+| `ingress.tls.hosts`                    | Custom TLS hosts configuration | `{}`                             |
 | `ingress.path`                              | Path for ingress rules. GCP users should set to `/*` | `/`                    |
 | `ingressDocker.enabled`                           | Create an ingress for Docker registry         | `false`                                  |
 | `ingressDocker.annotations`                       | Annotations to enhance docker ingress configuration  | `{}`                          |
 | `ingressDocker.tls.enabled`                       | Enable TLS                          | `true`                                 |
 | `ingressDocker.tls.secretName`                    | Name of the secret storing TLS cert, `false` to use the Ingress' default certificate | `nexus-tls`                             |
+| `ingressDocker.tls.hosts`                    | Custom TLS hosts configuration | `{}`                             |
 | `ingressDocker.path`                              | Path for docker ingress rules. GCP users should set to `/*` | `/`                    |
 | `tolerations`                               | tolerations list                    | `[]`                                    |
 | `config.enabled`                            | Enable configmap                    | `false`                                 |
@@ -319,6 +323,11 @@ You might need to scale the deployment to zero and back up to pick up the change
 
     kubectl scale --replicas=0 statefulset.apps/sonatype-nexus
     kubectl scale --replicas=1 statefulset.apps/sonatype-nexus
+
+### Graceful shutdown with terminationGracePeriodSeconds
+Customizing terminationGracePeriodSeconds maybe helpful to prevent Orientdb corruption during stop/start actions(eg : upgrade).  
+**WARNING** : It has no effect with the [default image of this chart](quay.io/travelaudience/docker-nexus) because of this [issue](https://github.com/travelaudience/docker-nexus/issues/56)  
+However it can be useful when you switch to the official image [here](https://hub.docker.com/r/sonatype/nexus3/tags?page=1&ordering=last_updated)
 
 
 ## After Installing the Chart

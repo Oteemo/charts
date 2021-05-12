@@ -29,6 +29,9 @@ nexus:
       value: "-Xms1200M -Xmx1200M -XX:MaxDirectMemorySize=2G -XX:ActiveProcessorCount=4"
     - name: NEXUS_SECURITY_RANDOMPASSWORD
       value: "false"
+  # envFrom:
+  # - configMapRef:
+  #     name: special-config
   # nodeSelector:
   #   cloud.google.com/gke-nodepool: default-pool
   resources: {}
@@ -46,6 +49,7 @@ nexus:
   # The ports should only be changed if the nexus image uses a different port
   dockerPort: 5003
   nexusPort: 8081
+  additionalPorts: []
   service:
     type: NodePort
     # clusterIP: None
@@ -85,7 +89,13 @@ nexus:
   #   - "example.com"
   #   - "www.example.com"
   context:
-  terminationGracePeriodSeconds: 120
+  # When using nexus it is important that all the files in the data directory have the proper owner configured. Therefore this
+  # value defaults to true to apply chown -R nexus:nexus to the mounted directory at every startup of the container.
+  chownNexusData: true
+  # terminationGracePeriodSeconds : 30
+  # Set this value longer than the expected cleanup time for your process. Defaults to 30 seconds.
+  # WARNING : It has no effect with quay.io/travelaudience/docker-nexus which is using Runsvdir (https://github.com/travelaudience/docker-nexus/issues/56)
+  # However it can be useful when you switch to the official image (https://hub.docker.com/r/sonatype/nexus3/tags?page=1&ordering=last_updated)
 
 route:
   enabled: false
@@ -93,7 +103,7 @@ route:
   portName: docker
   labels:
   annotations:
-  # path: /docker
+  # path: docker.apps.ocp01.cluster.local
 
 nexusProxy:
   enabled: true
@@ -105,6 +115,8 @@ nexusProxy:
   targetPort: 8080
   # labels: {}
   env:
+    # Example for javaOptions : "-Xms3G -Xmx3G -XX:MaxDirectMemorySize=3G"
+    javaOptions:
     nexusDockerHost:
     nexusHttpHost:
     enforceHttps: false
@@ -234,6 +246,7 @@ ingress:
   tls:
     enabled: true
     secretName: nexus-tls
+    hosts:
   # Specify custom rules in addition to or instead of the nexus-proxy rules
   rules:
   # - host: http://nexus.127.0.0.1.nip.io
@@ -256,6 +269,7 @@ ingressDocker:
   tls:
     enabled: true
     secretName: nexus-tls
+    hosts:
   # Specify custom rules in addition to or instead of the nexus-proxy rules
   rules:
   # - host: http://nexus.127.0.0.1.nip.io
@@ -265,6 +279,7 @@ ingressDocker:
   #         serviceName: additional-svc
   #         servicePort: 80
 
+affinity: {}
 
 tolerations: []
 
