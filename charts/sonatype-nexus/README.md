@@ -326,7 +326,7 @@ You might need to scale the deployment to zero and back up to pick up the change
 
 ### Graceful shutdown with terminationGracePeriodSeconds
 Customizing terminationGracePeriodSeconds maybe helpful to prevent Orientdb corruption during stop/start actions(eg : upgrade).  
-**WARNING** : It has no effect with the [default image of this chart](quay.io/travelaudience/docker-nexus) because of this [issue](https://github.com/travelaudience/docker-nexus/issues/56)  
+**WARNING** : It has no effect with the [default image of this chart](https://quay.io/repository/travelaudience/docker-nexus?tag=latest&tab=tags) because of this [issue](https://github.com/travelaudience/docker-nexus/issues/56)  
 However it can be useful when you switch to the official image [here](https://hub.docker.com/r/sonatype/nexus3/tags?page=1&ordering=last_updated)
 
 
