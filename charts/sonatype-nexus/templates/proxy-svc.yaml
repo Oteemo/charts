@@ -42,10 +42,10 @@ spec:
       protocol: TCP
       targetPort: {{ .Values.nexus.dockerPort }}
 {{- range $ports := .Values.nexus.additionalPorts }}
-    - port: {{ $port.containerPort }}
-      name: {{ $port.name }}
+    - port: {{ $ports.containerPort }}
+      name: {{ $ports.name }}
       protocol: TCP
-      targetPort: {{ $port.containerPort }}
+      targetPort: {{ $ports.containerPort }}
 {{- end }}
 {{- end }}
   selector:
