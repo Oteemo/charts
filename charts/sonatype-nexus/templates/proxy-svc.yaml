@@ -41,6 +41,12 @@ spec:
       name: docker
       protocol: TCP
       targetPort: {{ .Values.nexus.dockerPort }}
+{{- range $ports := .Values.nexus.additionalPorts }}
+    - port: {{ $ports.containerPort }}
+      name: {{ $ports.name }}
+      protocol: TCP
+      targetPort: {{ $ports.containerPort }}
+{{- end }}
 {{- end }}
   selector:
     app: {{ template "nexus.name" . }}
