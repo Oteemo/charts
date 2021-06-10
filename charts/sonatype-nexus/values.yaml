@@ -92,6 +92,10 @@ nexus:
   # When using nexus it is important that all the files in the data directory have the proper owner configured. Therefore this
   # value defaults to true to apply chown -R nexus:nexus to the mounted directory at every startup of the container.
   chownNexusData: true
+  # terminationGracePeriodSeconds : 30
+  # Set this value longer than the expected cleanup time for your process. Defaults to 30 seconds.
+  # WARNING : It has no effect with quay.io/travelaudience/docker-nexus which is using Runsvdir (https://github.com/travelaudience/docker-nexus/issues/56)
+  # However it can be useful when you switch to the official image (https://hub.docker.com/r/sonatype/nexus3/tags?page=1&ordering=last_updated)
 
 route:
   enabled: false

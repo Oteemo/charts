@@ -113,6 +113,7 @@ The following table lists the configurable parameters of the Nexus chart and the
 | `nexus.hostAliases`                         | Aliases for IPs in /etc/hosts       | []                                      |
 | `nexus.context`                             | Non-root path to run Nexus at       | `nil`                                   |
 | `nexus.chownNexusData`                      | Set false to not execute chown to the mounted nexus-data directory at startup | `true` |
+| `nexus.terminationGracePeriodSeconds`       | Let Nexus terminate gracefully [More informations here](#graceful-shutdown-with-terminationGracePeriodSeconds).     | `nil`                                   |
 | `nexusProxy.enabled`                        | Enable nexus proxy                  | `true`                                  |
 | `nexusProxy.svcName`                        | Nexus proxy service name            | `nil`                                  |
 | `nexusProxy.targetPort`                     | Container Port for Nexus proxy      | `8080`                                  |
@@ -322,6 +323,11 @@ You might need to scale the deployment to zero and back up to pick up the change
 
     kubectl scale --replicas=0 statefulset.apps/sonatype-nexus
     kubectl scale --replicas=1 statefulset.apps/sonatype-nexus
+
+### Graceful shutdown with terminationGracePeriodSeconds
+Customizing terminationGracePeriodSeconds maybe helpful to prevent Orientdb corruption during stop/start actions(eg : upgrade).  
+**WARNING** : It has no effect with the [default image of this chart](https://quay.io/repository/travelaudience/docker-nexus?tag=latest&tab=tags) because of this [issue](https://github.com/travelaudience/docker-nexus/issues/56)  
+However it can be useful when you switch to the official image [here](https://hub.docker.com/r/sonatype/nexus3/tags?page=1&ordering=last_updated)
 
 
 ## After Installing the Chart
