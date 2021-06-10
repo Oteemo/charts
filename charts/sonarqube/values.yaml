@@ -51,6 +51,8 @@ service:
   # loadBalancerSourceRanges:
   #   - 0.0.0.0/0
   # loadBalancerIP: 1.2.3.4
+  # You can set the port to be exposed when type is NodePort or LoadBalancer.
+  # nodePort: 30000
 ingress:
   enabled: false
   # Used to create an Ingress record.
