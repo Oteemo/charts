@@ -1,5 +1,8 @@
 # SonarQube Chart Changelog
 All changes to this chart will be documented in this file.
+## [9.x.x]
+* Use the `initContainers.securityContext` to also set the security context of the `wait-for-db` init container.
+
 ## [9.6.3]
 * Fixed GH-277 by ensuring current/new admin passwords are URL escaped in the change-admin-password-hook job.
 
