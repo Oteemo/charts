@@ -75,6 +75,10 @@ spec:
         - name: nexus
           image: {{ .Values.nexus.imageName }}:{{ .Values.nexus.imageTag }}
           imagePullPolicy: {{ .Values.nexus.imagePullPolicy }}
+          {{- if .Values.nexus.containerSecurityContext }}
+          securityContext:
+{{ toYaml .Values.nexus.containerSecurityContext | indent 12 }}
+          {{- end }}
           {{- if .Values.deployment.postStart.command }}
           lifecycle:
             postStart:
@@ -153,6 +157,10 @@ spec:
           resources:
 {{ toYaml .Values.nexusProxy.resources | indent 12 }}
           imagePullPolicy: {{ .Values.nexusProxy.imagePullPolicy }}
+          {{- if .Values.nexusProxy.containerSecurityContext }}
+          securityContext:
+{{ toYaml .Values.nexusProxy.containerSecurityContext | indent 12 }}
+          {{- end }}
           env:
             - name: ALLOWED_USER_AGENTS_ON_ROOT_REGEX
               value: {{ default "GoogleHC" .Values.nexusProxy.env.allowedUserAgentsOnRootRegex | quote }}
@@ -215,6 +223,10 @@ spec:
         - name: nexus-backup
           image: {{ .Values.nexusBackup.imageName }}:{{ .Values.nexusBackup.imageTag }}
           imagePullPolicy: {{ .Values.nexusBackup.imagePullPolicy }}
+          {{- if .Values.nexusBackup.containerSecurityContext }}
+          securityContext:
+{{ toYaml .Values.nexusBackup.containerSecurityContext | indent 12 }}
+          {{- end }}
           resources:
 {{ toYaml .Values.nexusBackup.resources | indent 12 }}
           env:
