@@ -161,7 +161,7 @@ The following table lists the configurable parameters of the Sonarqube chart and
 | `createPostgresqlSecret`                               | Set to `true` to create the postgresql secret in Sonarqube chart, instead of postgresql chart                          | `true`                        |
 | `postgresql.enabled`                                     | Set to `false` to use external server                                                                                     | `true`                          |
 | `postgresql.existingSecret`                              | Secret containing the password of the external Postgresql server                                                          | `sonar-postgresql`              |
-| `postgresql.secretKey`                             | `postgresql-password`           |
+| `postgresql.secretKey`                                  |                                                                                                                            | `postgresql-password`           |
 | `postgresql.existingSecretPasswordKey`                   | Secret Key containing the password of the external Postgresql server                                                      | `postgresql-password`           |
 | `postgresql.postgresqlServer`                            | Hostname of the external Postgresql server                                                                                | `null`                          |
 | `postgresql.postgresqlUsername`                          | Postgresql database user                                                                                                  | `sonarUser`                     |
