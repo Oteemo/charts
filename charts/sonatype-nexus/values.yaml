@@ -46,6 +46,7 @@ nexus:
       ##     to use all the available memory.
       # cpu: 250m
       # memory: 4800Mi
+  containerSecurityContext: {}
   # The ports should only be changed if the nexus image uses a different port
   dockerPort: 5003
   nexusPort: 8081
@@ -112,6 +113,7 @@ nexusProxy:
   imageTag: 2.6.0
   imagePullPolicy: IfNotPresent
   port: 8080
+  containerSecurityContext: {}
   targetPort: 8080
   # labels: {}
   env:
@@ -204,6 +206,7 @@ nexusBackup:
       env_auth = true
       region = us-east-1
       acl = authenticated-read
+  containerSecurityContext: {}
 
 nexusCloudiam:
   enabled: false
