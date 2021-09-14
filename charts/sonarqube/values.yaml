@@ -259,6 +259,9 @@ emptyDir: {}
 ## JDBC Database Type; by default postgresql. To use a different Database type, adjust
 jdbcDatabaseType: postgresql
 
+createPostgresqlSecret: true
+# create the postgresql secret in Sonarqube chart, outside of the postgresql chart.
+
 ## Override JDBC URL
 # jdbcUrlOverride: "jdbc:postgresql://myPostgress/myDatabase;socketTimeout=1500"
 
@@ -273,11 +276,12 @@ postgresql:
   # To use an external secret for the password for an external PostgreSQL
   # instance, set enabled to false and provide the name of the secret on the
   # line below:
-  # existingSecret: ""
-  # existingSecretPasswordKey: "postgresql-password"
   postgresqlUsername: "sonarUser"
-  postgresqlPassword: "sonarPass"
+  postgresqlPassword: ""
   postgresqlDatabase: "sonarDB"
+  existingSecret: sonar-postgresql
+  # This is the full name of the secret that will be created
+  secretKey: postgresql-password
   # Specify the TCP port that PostgreSQL should use
   service:
     port: 5432
