@@ -8,7 +8,7 @@ apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ template "nexus.ingres.docker" . }}
+  name: {{ template "nexus.ingress.docker" . }}
   namespace: {{ template "nexus.namespace" . }}
   labels:
 {{ include "nexus.labels" . | indent 4 }}
@@ -62,7 +62,7 @@ spec:
   {{- with .Values.ingressDocker.rules }}
     {{- toYaml . | nindent 4 }}
   {{- end -}}
-{{- if .Values.ingress.tls.enabled }}
+{{- if .Values.ingressDocker.tls.enabled }}
   tls:
     - hosts:
       {{- if .Values.nexusProxy.env.nexusDockerHost }}
