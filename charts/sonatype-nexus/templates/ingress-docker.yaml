@@ -1,5 +1,24 @@
 {{- if .Values.ingressDocker.enabled }}
-apiVersion: {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1beta1" }} networking.k8s.io/v1beta1 {{- else }} extensions/v1beta1 {{- end }}
+
+{{- $ingressApiVersion := "extensions/v1beta1" -}}
+{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1beta1/Ingress" -}}
+  {{- $ingressApiVersion = "networking.k8s.io/v1beta1" -}}
+{{- end -}}
+{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" -}}
+  {{- $ingressApiVersion = "networking.k8s.io/v1" -}}
+{{- end -}}
+
+{{- $serviceName := include "nexus.fullname" . -}}
+{{- if .Values.nexusProxy.svcName }}
+  {{- $serviceName = .Values.nexusProxy.svcName -}}
+{{- end }}
+
+{{- $servicePort := .Values.nexus.dockerPort -}}
+{{- if .Values.nexusProxy.enabled }}
+  {{- $servicePort = .Values.nexusProxy.port -}}
+{{- end }}
+
+apiVersion: {{ $ingressApiVersion }}
 kind: Ingress
 metadata:
   name: {{ template "nexus.ingres.docker" . }}
@@ -19,18 +38,19 @@ spec:
     - host: {{ .Values.nexusProxy.env.nexusDockerHost }}
       http:
         paths:
-          - backend:
-            {{- if .Values.nexusProxy.svcName }}
-              serviceName: {{ .Values.nexusProxy.svcName }}
+          - path: {{ .Values.ingressDocker.path }}
+            {{- if $.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+            pathType: {{ .Values.ingressDocker.pathType }}
+            backend:
+              service:
+                name: {{ $serviceName }}
+                port:
+                  number: {{ $servicePort }}
             {{- else }}
-              serviceName: {{ template "nexus.fullname" . }}
+            backend:
+              serviceName: {{ $serviceName }}
+              servicePort: {{ $servicePort }}
             {{- end }}
-            {{- if .Values.nexusProxy.enabled }}
-              servicePort: {{ .Values.nexusProxy.port }}
-            {{- else }}
-              servicePort: {{ .Values.nexus.dockerPort }}
-            {{- end }}
-            path: {{ .Values.ingress.path }}
   {{- end }}
   {{- with .Values.ingressDocker.rules }}
     {{- toYaml . | nindent 4 }}
