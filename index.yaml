@@ -180,6 +180,34 @@ entries:
   sonarqube:
   - apiVersion: v1
     appVersion: 8.5.1-community
+    created: "2021-09-14T15:52:39.066294358Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 8.6.4
+    description: SonarQube is an open sourced code quality scanning tool
+    digest: 6c548128542680d3c1e3a0e20d4183e4017130b2fcfed2b255aa8763b28bd5cf
+    home: https://www.sonarqube.org/
+    icon: https://www.sonarqube.org/assets/logo-31ad3115b1b4b120f3d1efd63e6b13ac9f1f89437f0cf6881cc4d8b5603a52b4.svg
+    keywords:
+    - coverage
+    - security
+    - code
+    - quality
+    maintainers:
+    - email: rjkernick@gmail.com
+      name: rjkernick
+    - email: tsiddique@live.com
+      name: tsiddique
+    name: sonarqube
+    sources:
+    - https://github.com/SonarSource/docker-sonarqube
+    urls:
+    - https://github.com/Oteemo/charts/releases/download/sonarqube-9.6.6/sonarqube-9.6.6.tgz
+    version: 9.6.6
+  - apiVersion: v1
+    appVersion: 8.5.1-community
     created: "2021-08-25T12:31:42.047438514Z"
     dependencies:
     - condition: postgresql.enabled
@@ -1977,6 +2005,35 @@ entries:
   sonatype-nexus:
   - apiVersion: v1
     appVersion: 3.27.0
+    created: "2021-09-14T15:52:39.187575948Z"
+    description: Sonatype Nexus is an open source repository manager
+    digest: e285604b0250ce946313438fa2a2fbbb14ef63591e50b7a32e94ca01294631f9
+    home: https://www.sonatype.com/nexus-repository-oss
+    icon: https://www.sonatype.com/hubfs/2021%20Design%20System/Logo_vert@2x.png
+    keywords:
+    - artifacts
+    - dependency
+    - management
+    - sonatype
+    - nexus
+    - repository
+    maintainers:
+    - email: rjkernick@gmail.com
+      name: rjkernick
+    - email: tsiddique@live.com
+      name: tsiddique
+    name: sonatype-nexus
+    sources:
+    - https://github.com/sonatype/nexus-public
+    - https://github.com/travelaudience/docker-nexus
+    - https://github.com/travelaudience/kubernetes-nexus
+    - https://github.com/travelaudience/docker-nexus-backup
+    - https://github.com/dbccompany/docker-nexus-backup
+    urls:
+    - https://github.com/Oteemo/charts/releases/download/sonatype-nexus-5.2.2/sonatype-nexus-5.2.2.tgz
+    version: 5.2.2
+  - apiVersion: v1
+    appVersion: 3.27.0
     created: "2021-08-25T12:31:12.855903622Z"
     description: Sonatype Nexus is an open source repository manager
     digest: ef2fd442e5d29034fd35d890d8dc5837726f07eb59d2805fc6eaa4cc1d441b38
@@ -3473,4 +3530,4 @@ entries:
     urls:
     - https://github.com/Oteemo/charts/releases/download/sonatype-nexus-1.21.4/sonatype-nexus-1.21.4.tgz
     version: 1.21.4
-generated: "2021-08-25T12:31:42.048507376Z"
+generated: "2021-09-14T15:52:39.189152058Z"
