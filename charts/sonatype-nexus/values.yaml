@@ -259,6 +259,8 @@ ingress:
   #         serviceName: additional-svc
   #         servicePort: 80
 
+  # className: nginx
+
 ingressDocker:
   enabled: false
   path: /
@@ -281,6 +283,8 @@ ingressDocker:
   #     - backend:
   #         serviceName: additional-svc
   #         servicePort: 80
+
+  # className: nginx
 
 affinity: {}
 
