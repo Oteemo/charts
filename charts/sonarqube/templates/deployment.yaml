@@ -217,8 +217,8 @@ spec:
             - name: SONAR_JDBC_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ template "postgresql.secret" . }}
-                  key: {{ template "postgresql.secretPasswordKey" . }}
+                  name: {{- if .Values.postgresql.existingSecret }} {{ .Values.postgresql.existingSecret }} {{ else }} {{ .Release.Name }}-postgresql {{- end }}
+                  key: {{ .Values.postgresql.secretKey }}
             {{- with .Values.env }}
             {{- . | toYaml | trim | nindent 12 }}
             {{- end }}

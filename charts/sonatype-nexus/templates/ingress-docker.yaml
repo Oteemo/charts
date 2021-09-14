@@ -1,5 +1,11 @@
 {{- if .Values.ingressDocker.enabled }}
-apiVersion: {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1beta1" }} networking.k8s.io/v1beta1 {{- else }} extensions/v1beta1 {{- end }}
+{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" -}}
+apiVersion: networking.k8s.io/v1
+{{- else if .Capabilities.APIVersions.Has "networking.k8s.io/v1beta1/Ingress" -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
 kind: Ingress
 metadata:
   name: {{ template "nexus.ingres.docker" . }}
@@ -14,23 +20,44 @@ metadata:
     {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
+  {{- if .Values.ingressDocker.className }}
+  ingressClassName: {{ .Values.ingressDocker.className }}
+  {{- end }}
   rules:
   {{- if .Values.nexusProxy.env.nexusDockerHost }}
     - host: {{ .Values.nexusProxy.env.nexusDockerHost }}
       http:
         paths:
           - backend:
-            {{- if .Values.nexusProxy.svcName }}
+            {{- if $.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+              service:
+                {{- if .Values.nexusProxy.svcName }}
+                name: {{ .Values.nexusProxy.svcName }}
+                {{- else }}
+                name: {{ template "nexus.fullname" . }}
+                {{- end }}
+                port:
+                  {{- if .Values.nexusProxy.enabled }}
+                  number: {{ .Values.nexusProxy.port }}
+                  {{- else }}
+                  number: {{ .Values.nexus.dockerPort }}
+                  {{- end }}
+            {{- else }}
+              {{- if .Values.nexusProxy.svcName }}
               serviceName: {{ .Values.nexusProxy.svcName }}
-            {{- else }}
+              {{- else }}
               serviceName: {{ template "nexus.fullname" . }}
-            {{- end }}
-            {{- if .Values.nexusProxy.enabled }}
+              {{- end }}
+              {{- if .Values.nexusProxy.enabled }}
               servicePort: {{ .Values.nexusProxy.port }}
-            {{- else }}
+              {{- else }}
               servicePort: {{ .Values.nexus.dockerPort }}
+              {{- end }}
             {{- end }}
             path: {{ .Values.ingress.path }}
+            {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+            pathType: Prefix
+            {{- end }}
   {{- end }}
   {{- with .Values.ingressDocker.rules }}
     {{- toYaml . | nindent 4 }}
