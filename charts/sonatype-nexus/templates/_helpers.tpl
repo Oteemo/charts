@@ -55,6 +55,6 @@ heritage: {{ .Release.Service }}
 {{/*
 Create a fully qualified name for docker ingress.
 */}}
-{{- define "nexus.ingres.docker" -}}
+{{- define "nexus.ingress.docker" -}}
 {{- printf "%s-%s" (include "nexus.fullname" .) "docker" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}

@@ -1,13 +1,5 @@
 {{- if .Values.ingressDocker.enabled }}
 
-{{- $ingressApiVersion := "extensions/v1beta1" -}}
-{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1beta1/Ingress" -}}
-  {{- $ingressApiVersion = "networking.k8s.io/v1beta1" -}}
-{{- end -}}
-{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" -}}
-  {{- $ingressApiVersion = "networking.k8s.io/v1" -}}
-{{- end -}}
-
 {{- $serviceName := include "nexus.fullname" . -}}
 {{- if .Values.nexusProxy.svcName }}
   {{- $serviceName = .Values.nexusProxy.svcName -}}
@@ -18,10 +10,16 @@
   {{- $servicePort = .Values.nexusProxy.port -}}
 {{- end }}
 
-apiVersion: {{ $ingressApiVersion }}
+{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" -}}
+apiVersion: networking.k8s.io/v1
+{{- else if .Capabilities.APIVersions.Has "networking.k8s.io/v1beta1/Ingress" -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
 kind: Ingress
 metadata:
-  name: {{ template "nexus.ingres.docker" . }}
+  name: {{ template "nexus.ingress.docker" . }}
   namespace: {{ template "nexus.namespace" . }}
   labels:
 {{ include "nexus.labels" . | indent 4 }}
@@ -33,6 +31,9 @@ metadata:
     {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
+  {{- if .Values.ingressDocker.className }}
+  ingressClassName: {{ .Values.ingressDocker.className }}
+  {{- end }}
   rules:
   {{- if .Values.nexusProxy.env.nexusDockerHost }}
     - host: {{ .Values.nexusProxy.env.nexusDockerHost }}
@@ -55,7 +56,7 @@ spec:
   {{- with .Values.ingressDocker.rules }}
     {{- toYaml . | nindent 4 }}
   {{- end -}}
-{{- if .Values.ingress.tls.enabled }}
+{{- if .Values.ingressDocker.tls.enabled }}
   tls:
     - hosts:
       {{- if .Values.nexusProxy.env.nexusDockerHost }}

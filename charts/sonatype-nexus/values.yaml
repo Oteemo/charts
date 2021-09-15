@@ -20,7 +20,7 @@ initAdminPassword:
 
 nexus:
   imageName: quay.io/travelaudience/docker-nexus
-  imageTag: 3.27.0
+  imageTag: 3.33.0-01
   imagePullPolicy: IfNotPresent
   # Uncomment this to scheduler pods on priority
   # priorityClassName: "high-priority"
@@ -260,6 +260,8 @@ ingress:
   #         serviceName: additional-svc
   #         servicePort: 80
 
+  # className: nginx
+
 ingressDocker:
   enabled: false
   path: /
@@ -283,6 +285,8 @@ ingressDocker:
   #     - backend:
   #         serviceName: additional-svc
   #         servicePort: 80
+
+  # className: nginx
 
 affinity: {}
 
