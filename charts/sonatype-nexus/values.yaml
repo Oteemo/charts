@@ -239,6 +239,7 @@ rbac:
 ingress:
   enabled: false
   path: /
+  pathType: Prefix
   labels: {}
   annotations: {}
   # # NOTE: Can't use 'false' due to https://github.com/jetstack/kube-lego/issues/173.
@@ -264,6 +265,7 @@ ingress:
 ingressDocker:
   enabled: false
   path: /
+  pathType: Prefix
   labels: {}
   annotations: {}
   # # NOTE: Can't use 'false' due to https://github.com/jetstack/kube-lego/issues/173.

@@ -1,4 +1,15 @@
 {{- if .Values.ingress.enabled -}}
+
+{{- $serviceName := include "nexus.fullname" . -}}
+{{- if .Values.nexusProxy.svcName }}
+  {{- $serviceName = .Values.nexusProxy.svcName -}}
+{{- end }}
+
+{{- $servicePort := .Values.nexus.nexusPort -}}
+{{- if .Values.nexusProxy.enabled }}
+  {{- $servicePort = .Values.nexusProxy.port -}}
+{{- end }}
+
 {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" -}}
 apiVersion: networking.k8s.io/v1
 {{- else if .Capabilities.APIVersions.Has "networking.k8s.io/v1beta1/Ingress" -}}
@@ -28,35 +39,18 @@ spec:
     - host: {{ .Values.nexusProxy.env.nexusHttpHost }}
       http:
         paths:
-          - backend:
+          - path: {{ .Values.ingress.path }}
             {{- if $.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+            pathType: {{ .Values.ingress.pathType }}
+            backend:
               service:
-                {{- if .Values.nexusProxy.svcName }}
-                name: {{ .Values.nexusProxy.svcName }}
-                {{- else }}
-                name: {{ template "nexus.fullname" . }}
-                {{- end }}
+                name: {{ $serviceName }}
                 port:
-                  {{- if .Values.nexusProxy.enabled }}
-                  number: {{ .Values.nexusProxy.port }}
-                  {{- else }}
-                  number: {{ .Values.nexus.nexusPort }}
-                  {{- end }}
+                  number: {{ $servicePort }}
             {{- else }}
-              {{- if .Values.nexusProxy.svcName }}
-              serviceName: {{ .Values.nexusProxy.svcName }}
-              {{- else }}
-              serviceName: {{ template "nexus.fullname" . }}
-              {{- end }}
-              {{- if .Values.nexusProxy.enabled }}
-              servicePort: {{ .Values.nexusProxy.port }}
-              {{- else }}
-              servicePort: {{ .Values.nexus.nexusPort }}
-              {{- end }}
-            {{- end }}
-            path: {{ .Values.ingress.path }}
-            {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
-            pathType: Prefix
+            backend:
+              serviceName: {{ $serviceName }}
+              servicePort: {{ $servicePort }}
             {{- end }}
 {{- end }}
   {{- with .Values.ingress.rules }}
