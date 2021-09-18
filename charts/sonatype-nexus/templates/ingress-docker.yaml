@@ -10,9 +10,9 @@
   {{- $servicePort = .Values.nexusProxy.port -}}
 {{- end }}
 
-{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" -}}
+{{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1" -}}
 apiVersion: networking.k8s.io/v1
-{{- else if .Capabilities.APIVersions.Has "networking.k8s.io/v1beta1/Ingress" -}}
+{{- else if .Capabilities.APIVersions.Has "networking.k8s.io/v1beta1" -}}
 apiVersion: networking.k8s.io/v1beta1
 {{- else -}}
 apiVersion: extensions/v1beta1
@@ -40,7 +40,7 @@ spec:
       http:
         paths:
           - path: {{ .Values.ingressDocker.path }}
-            {{- if $.Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
+            {{- if $.Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
             pathType: {{ .Values.ingressDocker.pathType }}
             backend:
               service:
