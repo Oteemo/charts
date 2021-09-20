@@ -180,6 +180,34 @@ entries:
   sonarqube:
   - apiVersion: v1
     appVersion: 8.5.1-community
+    created: "2021-09-20T15:33:02.59494702Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 8.6.4
+    description: SonarQube is an open sourced code quality scanning tool
+    digest: ca58f6eee3933bd7d10c961d8ae5b7adfa0b648606b41deee784b7d5faca9924
+    home: https://www.sonarqube.org/
+    icon: https://www.sonarqube.org/assets/logo-31ad3115b1b4b120f3d1efd63e6b13ac9f1f89437f0cf6881cc4d8b5603a52b4.svg
+    keywords:
+    - coverage
+    - security
+    - code
+    - quality
+    maintainers:
+    - email: rjkernick@gmail.com
+      name: rjkernick
+    - email: tsiddique@live.com
+      name: tsiddique
+    name: sonarqube
+    sources:
+    - https://github.com/SonarSource/docker-sonarqube
+    urls:
+    - https://github.com/Oteemo/charts/releases/download/sonarqube-9.8.2/sonarqube-9.8.2.tgz
+    version: 9.8.2
+  - apiVersion: v1
+    appVersion: 8.5.1-community
     created: "2021-09-18T17:18:50.765784451Z"
     dependencies:
     - condition: postgresql.enabled
@@ -3702,4 +3730,4 @@ entries:
     urls:
     - https://github.com/Oteemo/charts/releases/download/sonatype-nexus-1.21.4/sonatype-nexus-1.21.4.tgz
     version: 1.21.4
-generated: "2021-09-18T17:18:50.862791698Z"
+generated: "2021-09-20T15:33:02.596082128Z"
