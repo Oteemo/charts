@@ -224,7 +224,7 @@ If `nexusProxy.env.cloudIamAuthEnabled` is set to `true` the following variables
 | `nexusProxy.secrets.password`    | Password to the Java Keystore file | `nil`                                                |
 
 ```bash
-helm install --set persistence.enabled=false my-release stable/sonatype-nexus
+helm install --set persistence.enabled=false my-release oteemocharts/sonatype-nexus
 ```
 
 The above example turns off the persistence. Data will not be kept between restarts or deployments
@@ -232,7 +232,7 @@ The above example turns off the persistence. Data will not be kept between resta
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
 
 ```bash
-helm install -f my-values.yaml sonatype-nexus stable/sonatype-nexus
+helm install -f my-values.yaml sonatype-nexus oteemocharts/sonatype-nexus
 ```
 
 ### Persistence
