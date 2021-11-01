@@ -143,6 +143,13 @@ extraInitContainers: {}
 #      - name: "downloads"
 #        mountPath: "/downloads"
 
+extraContainers: []
+## Array of extra containers to run alongside the sonarqube container
+## Example:
+#  - name: "example-container"
+#    image: "busybox"
+#    imagePullPolicy: Always
+#    command: ['sh', '-c', 'tail -f /dev/null']
 
 ## Provide a secret containing one or more certificate files in the keys that will be added to cacerts
 ## The cacerts file will be set via SONARQUBE_WEB_JVM_OPTS and SONAR_CE_JAVAOPTS
