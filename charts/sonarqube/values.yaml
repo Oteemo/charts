@@ -193,6 +193,9 @@ plugins:
   # Set to true to not validate the server's certificate to download plugin
   noCheckCertificate: false
 
+  ## Specify extra mounts for install-plugins init container. Refer to ".spec.containers.volumeMounts" specification : https://kubernetes.io/fr/docs/concepts/storage/volumes/.
+  mounts: []
+
 ## Values to add to SONARQUBE_WEB_JVM_OPTS
 ##
 # jvmOpts: "-Djava.net.preferIPv4Stack=true"
