@@ -83,6 +83,12 @@ nexus:
     failureThreshold: 6
     # timeoutSeconds: 10
     path: /
+  # startupProbe:
+  #   initialDelaySeconds: 10
+  #   periodSeconds: 10
+  #   failureThreshold: 300
+  #   # timeoutSeconds: 10
+  #   path: /
   # hostAliases allows the modification of the hosts file inside a container
   hostAliases: []
   # - ip: "192.168.1.10"
