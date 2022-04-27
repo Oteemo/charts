@@ -347,6 +347,8 @@ serviceAccount:
   # name:
   ## Annotations for the Service Account
   annotations: {}
+  # Disable the automouting of the Service Account Token into the pod filesystem.
+  automountServiceAccountToken: false
 
 # extraConfig is used to load Environment Variables from Secrets and ConfigMaps
 # which may have been written by other tools, such as external orchestrators.
