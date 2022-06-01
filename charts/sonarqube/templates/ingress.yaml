@@ -31,7 +31,7 @@ spec:
   {{- end }}
   {{- if .Values.ingress.annotations }}
   {{- range $key, $value := .Values.ingress.annotations }}
-  {{- if and (eq $key "kubernetes.io/ingress.class") (contains $value "gce") }}
+  {{- if and (eq $key "kubernetes.io/ingress.class") (contains (toString $value) "gce") }}
   backend:
     serviceName: {{ default $serviceName .serviceName }}
     servicePort: {{ default $servicePort .servicePort }}
