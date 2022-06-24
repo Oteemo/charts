@@ -1,5 +1,13 @@
 # SonarQube
 
+***This chart has been deprecated, please refer to another available chart listed below***
+
+## Alternative Charts
+
+* [PlatformOne's version](https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/sonarqube)
+* [SonarSource's version](https://github.com/SonarSource/helm-chart-sonarqube)
+* Other versions can be found on artifacthub.io
+
 [SonarQube](https://www.sonarqube.org/) is an open sourced code quality scanning tool.
 
 ## Introduction

@@ -1,5 +1,7 @@
 # Oteemo Charts Repository
 
+***This helm charts repository has been deprecated, please see individual charts for examples of where to migrate to***
+
 Welcome to the oteemo charts repository. All charts are in the charts directory.
 
 ## Adding the chart Repository

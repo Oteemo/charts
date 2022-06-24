@@ -1,5 +1,15 @@
 # Nexus
 
+***This chart has been deprecated, please use one of the other helm charts below***
+
+## Alternative Helm Charts
+
+* [Sonatype's Chart](https://github.com/sonatype/helm3-charts)
+* [PlatformOne's chart](https://repo1.dso.mil/platform-one/big-bang/apps/developer-tools/nexus)
+* [Artifact Hub](https://artifacthub.io)
+
+## Nexus information
+
 [Nexus OSS](https://www.sonatype.com/nexus-repository-oss) is a free open source repository manager. It supports a wide range of package formats and it's used by hundreds of tech companies.
 
 ## Introduction
