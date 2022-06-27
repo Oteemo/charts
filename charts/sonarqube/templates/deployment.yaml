@@ -122,6 +122,9 @@ spec:
               subPath: lib/common
             - name: install-plugins
               mountPath: /tmp/scripts/
+            {{- if .Values.plugins.mounts }}
+{{ toYaml .Values.plugins.mounts | indent 12 }}
+            {{- end }}
             {{- if .Values.plugins.netrcCreds }}
             - name: plugins-netrc-file
               mountPath: /root
