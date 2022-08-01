@@ -62,11 +62,11 @@ spec:
       {{- if .Values.nexusProxy.env.nexusHttpHost }}
         - {{ .Values.nexusProxy.env.nexusHttpHost }}
       {{- end }}
+      {{- with .Values.ingress.tls.hosts }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
       {{- if .Values.ingress.tls.secretName }}
       secretName: {{ .Values.ingress.tls.secretName | quote }}
       {{- end }}
-  {{- with .Values.ingress.tls.hosts }}
-    {{- toYaml . | nindent 4 }}
-  {{- end -}}
 {{- end -}}
 {{- end }}
