@@ -329,9 +329,12 @@ deployment:
 
 # # To use an additional secret, set enable to true and add data
 secret:
+  metadata:
+    name: nexus-secret
   enabled: false
   mountPath: /etc/secret-volume
   readOnly: true
+  type: Opaque
   data:
 
 # # To use an additional service, set enable to true
